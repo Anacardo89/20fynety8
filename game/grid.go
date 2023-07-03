@@ -66,38 +66,3 @@ func (g *grid) getFreeTiles() []tile {
 	}
 	return freeTiles
 }
-
-func (t *tile) absorb(another tile) bool {
-	if t.value == another.value {
-		t.value += another.value
-		return true
-	}
-	return false
-}
-
-func (g *grid) moveLeft() {
-	g.smooshLeft()
-	for j := 0; j < g.rows-1; j++ {
-		for i := 0; i < g.cols; i++ {
-			ok := g.tiles[i][j].absorb(g.tiles[i+1][j])
-			if ok {
-				g.smooshLeft()
-				i--
-			}
-		}
-	}
-}
-
-func (g *grid) smooshLeft() {
-	for j := 0; j < g.rows; j++ {
-		count := 0
-		for i := 0; i < g.cols; i++ {
-			currTile := g.tiles[i][j]
-			if currTile.value > 0 {
-				g.tiles[count][j] = currTile
-				currTile.value = 0
-				count++
-			}
-		}
-	}
-}
