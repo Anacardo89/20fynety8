@@ -1,7 +1,7 @@
 package game
 
 import (
-	"fmt"
+	"github.com/eiannone/keyboard"
 )
 
 func absorb(i, j, x, y int) bool {
@@ -129,18 +129,16 @@ func smooshDown(i int) {
 	}
 }
 
-func HandleMove(input string) {
-	fmt.Println(input)
-	if input == "a" {
+func HandleMove(input keyboard.Key) {
+	switch input {
+	case keyboard.KeyArrowLeft:
 		moveLeft()
-	}
-	if input == "d" {
+	case keyboard.KeyArrowRight:
 		moveRight()
-	}
-	if input == "w" {
+	case keyboard.KeyArrowUp:
 		moveUp()
-	}
-	if input == "s" {
+	case keyboard.KeyArrowDown:
 		moveDown()
+	default:
 	}
 }
