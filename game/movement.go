@@ -1,117 +1,146 @@
 package game
 
-func (t *tile) absorb(another tile) bool {
-	if t.value == another.value {
-		t.value += another.value
+import (
+	"fmt"
+)
+
+func absorb(i, j, x, y int) bool {
+	if board[i][j] == board[x][y] && board[i][j] > 0 {
+		board[i][j] += board[x][y]
+		board[x][y] = 0
 		return true
 	}
 	return false
 }
 
-func (g *grid) smooshLeft() {
-	for j := 0; j < g.rows; j++ {
-		count := 0
-		for i := 0; i < g.cols; i++ {
-			currTile := g.tiles[i][j]
-			if currTile.value > 0 {
-				g.tiles[count][j] = currTile
-				currTile.value = 0
-				count++
+func moveLeft() {
+	for i := 0; i < rows; i++ {
+		smooshLeft(i)
+		for j := 0; j < cols; j++ {
+			if j < cols-1 {
+				ok := absorb(i, j, i, j+1)
+				if ok {
+					smooshLeft(i)
+				}
 			}
+		}
+	}
+	placeInFreeTile()
+}
+
+func smooshLeft(i int) {
+	count := 0
+	for j := 0; j < cols; j++ {
+		curr := board[i][j]
+		if curr > 0 {
+			board[i][count] = curr
+			if j != count {
+				board[i][j] = 0
+			}
+			count++
 		}
 	}
 }
 
-func (g *grid) moveLeft() {
-	g.smooshLeft()
-	for j := 0; j < g.rows; j++ {
-		for i := 0; i < g.cols-1; i++ {
-			ok := g.tiles[i][j].absorb(g.tiles[i+1][j])
-			if ok {
-				g.smooshLeft()
-				i--
+func moveRight() {
+	for i := 0; i < rows; i++ {
+		smooshRight(i)
+		for j := cols - 1; j >= 0; j-- {
+			if j > 0 {
+				ok := absorb(i, j, i, j-1)
+				if ok {
+					smooshRight(i)
+				}
 			}
+		}
+	}
+	placeInFreeTile()
+}
+
+func smooshRight(i int) {
+	count := cols - 1
+	for j := cols - 1; j >= 0; j-- {
+		curr := board[i][j]
+		if curr > 0 {
+			board[i][count] = curr
+			if j != count {
+				board[i][j] = 0
+			}
+			count--
 		}
 	}
 }
 
-func (g *grid) smooshRight() {
-	for j := g.rows - 1; j >= 0; j-- {
-		count := g.rows - 1
-		for i := g.cols - 1; i >= 0; i-- {
-			currTile := g.tiles[i][j]
-			if currTile.value > 0 {
-				g.tiles[count][j] = currTile
-				currTile.value = 0
-				count--
+func moveUp() {
+	for i := 0; i < cols; i++ {
+		smooshUp(i)
+		for j := 0; j < rows; j++ {
+			if j < rows-1 {
+				ok := absorb(j, i, j+1, i)
+				if ok {
+					smooshUp(i)
+				}
 			}
+		}
+	}
+	placeInFreeTile()
+}
+
+func smooshUp(i int) {
+	count := 0
+	for j := 0; j < rows; j++ {
+		curr := board[j][i]
+		if curr > 0 {
+			board[count][i] = curr
+			if j != count {
+				board[j][i] = 0
+			}
+			count++
 		}
 	}
 }
 
-func (g *grid) moveRight() {
-	g.smooshRight()
-	for j := g.rows - 1; j >= 0; j-- {
-		for i := g.cols - 1; i > 0; i-- {
-			ok := g.tiles[i][j].absorb(g.tiles[i-1][j])
-			if ok {
-				g.smooshRight()
-				i++
+func moveDown() {
+	for i := cols - 1; i >= 0; i-- {
+		smooshDown(i)
+		for j := rows - 1; j >= 0; j-- {
+			if j > 0 {
+				ok := absorb(j, i, j-1, i)
+				if ok {
+					smooshDown(i)
+				}
 			}
+		}
+	}
+	placeInFreeTile()
+}
+
+func smooshDown(i int) {
+	count := rows - 1
+	for j := rows - 1; j >= 0; j-- {
+		curr := board[j][i]
+		if curr > 0 {
+			board[count][i] = curr
+			if j != count {
+				board[j][i] = 0
+			}
+			count--
 		}
 	}
 }
 
-func (g *grid) smooshUp() {
-	for i := 0; i < g.cols; i++ {
-		count := 0
-		for j := 0; j < g.rows; j++ {
-			currTile := g.tiles[i][j]
-			if currTile.value > 0 {
-				g.tiles[i][count] = currTile
-				currTile.value = 0
-				count++
-			}
-		}
+func HandleMove(input string) {
+	fmt.Println(input)
+	if input == "a" {
+		moveLeft()
 	}
-}
-
-func (g *grid) moveUp() {
-	g.smooshUp()
-	for i := 0; i < g.cols; i++ {
-		for j := 0; j < g.rows-1; j++ {
-			ok := g.tiles[i][j].absorb(g.tiles[i][j+1])
-			if ok {
-				g.smooshUp()
-				i--
-			}
-		}
+	if input == "d" {
+		moveRight()
 	}
-}
-
-func (g *grid) smooshDown() {
-	for i := g.cols - 1; i >= 0; i-- {
-		count := g.cols - 1
-		for j := g.rows - 1; j >= 0; j-- {
-			currTile := g.tiles[i][j]
-			if currTile.value > 0 {
-				g.tiles[i][count] = currTile
-				currTile.value = 0
-				count--
-			}
-		}
+	if input == "w" {
+		moveUp()
 	}
-}
-
-func (g *grid) moveDown() {
-	g.smooshDown()
-	for i := g.cols - 1; i >= 0; i-- {
-		for j := g.rows - 1; j > 0; j-- {
-			ok := g.tiles[i][j].absorb(g.tiles[i][j-1])
-			if ok {
-				g.smooshDown()
-				i++
-			}
-		}
+	if input == "s" {
+		moveDown()
 	}
 }
