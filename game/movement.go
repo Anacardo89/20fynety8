@@ -1,9 +1,5 @@
 package game
 
-import (
-	"github.com/eiannone/keyboard"
-)
-
 func absorb(i, j, x, y int) bool {
 	if board[i][j] == board[x][y] && board[i][j] > 0 {
 		board[i][j] += board[x][y]
@@ -129,15 +125,15 @@ func smooshDown(i int) {
 	}
 }
 
-func HandleMove(input keyboard.Key) {
+func HandleMove(input string) {
 	switch input {
-	case keyboard.KeyArrowLeft:
+	case "Left":
 		moveLeft()
-	case keyboard.KeyArrowRight:
+	case "Right":
 		moveRight()
-	case keyboard.KeyArrowUp:
+	case "Up":
 		moveUp()
-	case keyboard.KeyArrowDown:
+	case "Down":
 		moveDown()
 	default:
 	}

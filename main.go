@@ -2,32 +2,43 @@ package main
 
 import (
 	"2048/game"
+	"2048/gui"
 	"fmt"
+	"image/color"
 
-	"github.com/eiannone/keyboard"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/canvas"
 )
 
 func main() {
-	fmt.Println("Press ESC to exit")
+	a := app.New()
+	w := a.NewWindow("2048")
 	game.InitBoard()
-	game.ShowCLI()
-	if err := keyboard.Open(); err != nil {
-		panic(err)
-	}
-	defer func() {
-		_ = keyboard.Close()
+	gui.SetGrid()
+	gridVals := game.Export()
+	gui.UpdateGrid(gridVals)
+	w.SetContent(gui.Grid)
+	go func() {
+		for {
+			w.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
+				game.HandleMove(string(k.Name))
+				gridVals = game.Export()
+				gui.UpdateGrid(gridVals)
+				w.SetContent(gui.Grid)
+				for i := 0; i < len(gridVals); i++ {
+					if gridVals[i] == 2048 {
+						winTxt := canvas.NewText("You win", color.White)
+						winTxt.TextSize = 200
+						w.SetContent(winTxt)
+
+					}
+				}
+			})
+		}
 	}()
-	for {
-		_, key, err := keyboard.GetKey()
-		if err != nil {
-			panic(err)
-		}
-		if key == keyboard.KeyEsc {
-			break
-		}
-		game.HandleMove(key)
-		game.ShowCLI()
-	}
+	w.ShowAndRun()
+
 }
 
 func ShowIndex(rows, cols int) {

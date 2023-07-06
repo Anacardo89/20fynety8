@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
@@ -13,11 +12,7 @@ import (
 )
 
 var (
-	App    fyne.App
-	Window fyne.Window
-	lout   *fyne.Container
-	grid   *fyne.Container
-	text   *canvas.Text
+	Grid *fyne.Container
 )
 
 type Cell struct {
@@ -41,41 +36,28 @@ func newCell(text string, color color.Color) (cell *Cell) {
 	return cell
 }
 
-func SetupGUI() {
-	App = app.New()
-	Window = App.NewWindow("2048")
-	Window.Resize(fyne.NewSize(600, 600))
-	setLayout(startGrid())
-	Window.SetContent(lout)
-}
-
-func Update(gridVals []int) {
-	grid = updateGrid(gridVals)
-	setLayout(grid)
-	Window.SetContent(lout)
-}
-
-func setLayout(grid *fyne.Container) {
-	text = canvas.NewText("Use the Arrow keys to move", color.White)
-	lout = container.New(layout.NewVBoxLayout(), grid, text)
-}
-
-func startGrid() *fyne.Container {
+func UpdateGrid(gridVals []int) {
 	cols := 4
-	gameGrid := container.New(layout.NewGridLayout(cols))
-	for i := 0; i < cols*cols; i++ {
-		cell := newCell(strconv.Itoa(0), color.Gray{0x30})
-		gameGrid.Add(cell.container)
-	}
-	return gameGrid
-}
-
-func updateGrid(gridVals []int) *fyne.Container {
-	cols := 4
+	value := ""
 	gameGrid := container.New(layout.NewGridLayout(cols))
 	for i := 0; i < len(gridVals); i++ {
-		cell := newCell(strconv.Itoa(gridVals[i]), color.Gray{0x30})
+
+		if gridVals[i] > 0 {
+			value = strconv.Itoa(gridVals[i])
+		}
+		cell := newCell(value, color.Gray{0x30})
 		gameGrid.Add(cell.container)
+		value = ""
 	}
-	return gameGrid
+	Grid = gameGrid
+}
+
+func SetGrid() {
+	cols := 4
+	Grid := container.New(layout.NewGridLayout(cols))
+	for i := 0; i < cols; i++ {
+		cell := newCell("", color.Gray{0x30})
+		Grid.Add(cell.container)
+	}
+
 }
