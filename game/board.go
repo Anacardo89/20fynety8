@@ -63,3 +63,13 @@ func ShowCLI() {
 	}
 	fmt.Println()
 }
+
+func Export() []int {
+	var grid []int
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			grid = append(grid, board[i][j])
+		}
+	}
+	return grid
+}
