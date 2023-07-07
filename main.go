@@ -22,7 +22,7 @@ func main() {
 	game.InitBoard()
 	gui.SetGrid()
 	gridVals := game.Export()
-	gui.UpdateGrid(gridVals)
+	gui.UpdateGridColor(gridVals)
 	w.SetContent(gui.Grid)
 	w.Resize(fyne.NewSize(800, 600))
 	w.CenterOnScreen()
@@ -34,7 +34,7 @@ func main() {
 					losW.Show()
 				}
 				gridVals = game.Export()
-				gui.UpdateGrid(gridVals)
+				gui.UpdateGridColor(gridVals)
 				w.SetContent(gui.Grid)
 				if game.Win {
 					winW.Show()

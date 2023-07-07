@@ -66,7 +66,7 @@ func placeInFreeTile() {
 		return
 	}
 	toPlace := freeTiles[rand.Intn(len(freeTiles))]
-	board[toPlace.x][toPlace.y] = 1024
+	board[toPlace.x][toPlace.y] = 2
 }
 
 func checkWin(i, j int) {
