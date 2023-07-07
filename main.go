@@ -3,7 +3,6 @@ package main
 import (
 	"2048/game"
 	"2048/gui"
-	"fmt"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -14,25 +13,31 @@ import (
 func main() {
 	a := app.New()
 	w := a.NewWindow("2048")
+	losW := setLosW(a)
+	losW.Hide()
+	losW.CenterOnScreen()
+	winW := setWinW(a)
+	winW.Hide()
+	winW.CenterOnScreen()
 	game.InitBoard()
 	gui.SetGrid()
 	gridVals := game.Export()
 	gui.UpdateGrid(gridVals)
 	w.SetContent(gui.Grid)
+	w.Resize(fyne.NewSize(800, 600))
+	w.CenterOnScreen()
 	go func() {
 		for {
 			w.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
 				game.HandleMove(string(k.Name))
+				if game.Loose {
+					losW.Show()
+				}
 				gridVals = game.Export()
 				gui.UpdateGrid(gridVals)
 				w.SetContent(gui.Grid)
-				for i := 0; i < len(gridVals); i++ {
-					if gridVals[i] == 2048 {
-						winTxt := canvas.NewText("You win", color.White)
-						winTxt.TextSize = 200
-						w.SetContent(winTxt)
-
-					}
+				if game.Win {
+					winW.Show()
 				}
 			})
 		}
@@ -41,14 +46,18 @@ func main() {
 
 }
 
-func ShowIndex(rows, cols int) {
-	for i := 0; i < rows; i++ {
-		fmt.Print("|")
-		for j := 0; j < cols; j++ {
-			fmt.Print(i, j)
-			fmt.Print("|")
-		}
-		fmt.Println()
-	}
-	fmt.Println()
+func setLosW(a fyne.App) fyne.Window {
+	losW := a.NewWindow("Defeat")
+	looseTxt := canvas.NewText("You loose", color.White)
+	looseTxt.TextSize = 150
+	losW.SetContent(looseTxt)
+	return losW
+}
+
+func setWinW(a fyne.App) fyne.Window {
+	winW := a.NewWindow("Defeat")
+	winTxt := canvas.NewText("You win", color.White)
+	winTxt.TextSize = 150
+	winW.SetContent(winTxt)
+	return winW
 }

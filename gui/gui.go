@@ -36,6 +36,22 @@ func newCell(text string, color color.Color) (cell *Cell) {
 	return cell
 }
 
+func newCell2(text string, color color.Color) (cell *Cell) {
+	rect := canvas.NewRectangle(color)
+	rect.StrokeWidth = 150
+	label := canvas.NewText(text, colornames.White)
+	label.TextSize = 50
+	label.TextStyle = fyne.TextStyle{Bold: true}
+	cell = &Cell{
+		rectangle: rect,
+		text:      label,
+		container: container.New(layout.NewMaxLayout(), rect, label),
+	}
+
+	cell.text.Alignment = fyne.TextAlignCenter
+	return cell
+}
+
 func UpdateGrid(gridVals []int) {
 	cols := 4
 	value := ""
