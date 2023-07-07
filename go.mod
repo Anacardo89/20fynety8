@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	fyne.io/fyne/v2 v2.3.5
-	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
 	golang.org/x/image v0.3.0
 )
 

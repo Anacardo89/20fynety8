@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"math/rand"
 )
 
@@ -9,6 +8,8 @@ var (
 	board [][]int
 	rows  = 4
 	cols  = 4
+	Win   = false
+	Loose = false
 )
 
 type point struct {
@@ -26,6 +27,18 @@ func InitBoard() {
 	}
 	placeInFreeTile()
 	placeInFreeTile()
+}
+
+func InitBoardLoss() {
+	count := 1
+	for i := 0; i < rows; i++ {
+		var col []int
+		for j := 0; j < cols; j++ {
+			count++
+			col = append(col, count)
+		}
+		board = append(board, col)
+	}
 }
 
 func getFreeTiles() []point {
@@ -48,28 +61,18 @@ func getFreeTiles() []point {
 
 func placeInFreeTile() {
 	freeTiles := getFreeTiles()
+	if len(freeTiles) == 0 {
+		Loose = true
+		return
+	}
 	toPlace := freeTiles[rand.Intn(len(freeTiles))]
-	board[toPlace.x][toPlace.y] = 2
+	board[toPlace.x][toPlace.y] = 1024
 }
 
-func ShowCLI() {
-	for i := 0; i < len(board); i++ {
-		fmt.Print("|")
-		for j := 0; j < len(board[i]); j++ {
-			fmt.Print(board[i][j])
-			fmt.Print("|")
-		}
-		fmt.Println()
+func checkWin(i, j int) {
+	if board[i][j] == 2048 {
+		Win = true
+		return
 	}
-	fmt.Println()
-}
 
-func Export() []int {
-	var grid []int
-	for i := 0; i < rows; i++ {
-		for j := 0; j < cols; j++ {
-			grid = append(grid, board[i][j])
-		}
-	}
-	return grid
 }
