@@ -12,7 +12,22 @@ import (
 )
 
 var (
-	Grid *fyne.Container
+	Grid     *fyne.Container
+	colorMap = map[int][]uint8{
+		0:    []uint8{144, 144, 144, 210},
+		2:    []uint8{234, 224, 46, 210},
+		4:    []uint8{234, 169, 46, 210},
+		8:    []uint8{150, 234, 46, 210},
+		16:   []uint8{46, 234, 193, 210},
+		32:   []uint8{246, 146, 199, 210},
+		64:   []uint8{245, 146, 246, 210},
+		128:  []uint8{141, 125, 241, 210},
+		256:  []uint8{216, 71, 14, 210},
+		512:  []uint8{231, 45, 45, 210},
+		1024: []uint8{70, 231, 45, 210},
+		2048: []uint8{45, 231, 136, 210},
+		4096: []uint8{255, 255, 0, 210},
+	}
 )
 
 type Cell struct {
@@ -21,8 +36,15 @@ type Cell struct {
 	container *fyne.Container
 }
 
-func newCell(text string, color color.Color) (cell *Cell) {
-	rect := canvas.NewRectangle(color)
+func newCellColor(value int) (cell *Cell) {
+	var cellColor []uint8
+	if value >= 4096 {
+		cellColor = colorMap[4096]
+	} else {
+		cellColor = colorMap[value]
+	}
+	rect := canvas.NewRectangle(color.NRGBA{R: cellColor[0], G: cellColor[1], B: cellColor[2], A: cellColor[3]})
+	text := strconv.Itoa(value)
 	label := canvas.NewText(text, colornames.White)
 	label.TextSize = 50
 	label.TextStyle = fyne.TextStyle{Bold: true}
@@ -36,9 +58,10 @@ func newCell(text string, color color.Color) (cell *Cell) {
 	return cell
 }
 
-func newCell2(text string, color color.Color) (cell *Cell) {
+func newCell(value int, color color.Color) (cell *Cell) {
+
 	rect := canvas.NewRectangle(color)
-	rect.StrokeWidth = 150
+	text := strconv.Itoa(value)
 	label := canvas.NewText(text, colornames.White)
 	label.TextSize = 50
 	label.TextStyle = fyne.TextStyle{Bold: true}
@@ -50,30 +73,30 @@ func newCell2(text string, color color.Color) (cell *Cell) {
 
 	cell.text.Alignment = fyne.TextAlignCenter
 	return cell
-}
-
-func UpdateGrid(gridVals []int) {
-	cols := 4
-	value := ""
-	gameGrid := container.New(layout.NewGridLayout(cols))
-	for i := 0; i < len(gridVals); i++ {
-
-		if gridVals[i] > 0 {
-			value = strconv.Itoa(gridVals[i])
-		}
-		cell := newCell(value, color.Gray{0x30})
-		gameGrid.Add(cell.container)
-		value = ""
-	}
-	Grid = gameGrid
 }
 
 func SetGrid() {
 	cols := 4
 	Grid := container.New(layout.NewGridLayout(cols))
 	for i := 0; i < cols; i++ {
-		cell := newCell("", color.Gray{0x30})
+		cell := newCellColor(0)
 		Grid.Add(cell.container)
 	}
 
+}
+
+func UpdateGridColor(gridVals []int) {
+	cols := 4
+	value := 0
+	gameGrid := container.New(layout.NewGridLayout(cols))
+	for i := 0; i < len(gridVals); i++ {
+
+		if gridVals[i] > 0 {
+			value = gridVals[i]
+		}
+		cell := newCellColor(value)
+		gameGrid.Add(cell.container)
+		value = 0
+	}
+	Grid = gameGrid
 }
