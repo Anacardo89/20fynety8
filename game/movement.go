@@ -1,5 +1,33 @@
 package game
 
+func HandleMove(input string) {
+	tmpBoard = make([][]int, len(board))
+	for i := range board {
+		tmpBoard[i] = make([]int, len(board[i]))
+		copy(tmpBoard[i], board[i])
+	}
+	switch input {
+	case "Left":
+		moveLeft()
+	case "Right":
+		moveRight()
+	case "Up":
+		moveUp()
+	case "Down":
+		moveDown()
+	default:
+	}
+	if !equalBoards() {
+		placeInFreeTile()
+	} else {
+		freeTiles := getFreeTiles()
+		if len(freeTiles) == 0 {
+			Loose = true
+			return
+		}
+	}
+}
+
 func absorb(i, j, x, y int) bool {
 	if board[i][j] == board[x][y] && board[i][j] > 0 {
 		board[i][j] += board[x][y]
@@ -7,6 +35,17 @@ func absorb(i, j, x, y int) bool {
 		return true
 	}
 	return false
+}
+
+func equalBoards() bool {
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if board[i][j] != tmpBoard[i][j] {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func moveLeft() {
@@ -21,7 +60,6 @@ func moveLeft() {
 			}
 		}
 	}
-	placeInFreeTile()
 }
 
 func smooshLeft(i int) {
@@ -50,7 +88,6 @@ func moveRight() {
 			}
 		}
 	}
-	placeInFreeTile()
 }
 
 func smooshRight(i int) {
@@ -79,7 +116,6 @@ func moveUp() {
 			}
 		}
 	}
-	placeInFreeTile()
 }
 
 func smooshUp(i int) {
@@ -108,7 +144,6 @@ func moveDown() {
 			}
 		}
 	}
-	placeInFreeTile()
 }
 
 func smooshDown(i int) {
@@ -122,19 +157,5 @@ func smooshDown(i int) {
 			}
 			count--
 		}
-	}
-}
-
-func HandleMove(input string) {
-	switch input {
-	case "Left":
-		moveLeft()
-	case "Right":
-		moveRight()
-	case "Up":
-		moveUp()
-	case "Down":
-		moveDown()
-	default:
 	}
 }

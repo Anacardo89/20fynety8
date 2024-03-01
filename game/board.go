@@ -5,11 +5,12 @@ import (
 )
 
 var (
-	board [][]int
-	rows  = 4
-	cols  = 4
-	Win   = false
-	Loose = false
+	board    [][]int
+	tmpBoard [][]int
+	rows     = 4
+	cols     = 4
+	Win      = false
+	Loose    = false
 )
 
 type point struct {
@@ -51,10 +52,8 @@ func getFreeTiles() []point {
 					y: j,
 				}
 				freeTiles = append(freeTiles, p1)
-
 			}
 		}
-
 	}
 	return freeTiles
 }
