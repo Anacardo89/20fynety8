@@ -10,12 +10,8 @@ Fyne is a GUI framework fo go.
 [https://go.dev/doc/install](https://go.dev/doc/install)
 2- install fyne
 [https://docs.fyne.io/started/](https://docs.fyne.io/started/)
+3- clone the repo
+4- `go run main.go`
 
 ### Usage:
-- the blue button saves an image of the boards
-- the red button clears the working copy of the boards
-- refreshing the page loads the saved boards and overwrites the working copy
-- that's about it
-
-#### Disclaimer:
-For public health reasons the creator strongly advises against checking out the css file as it is a cesspool and you might catch something nasty, but then again what css file isn't **AMIRITE!?** _Heh..._ _...heh..._ \*weep\*
+- control with arrow keys
