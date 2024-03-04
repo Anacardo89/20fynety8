@@ -1,4 +1,5 @@
 # 20fynety8 - A fyne 2048
+![image](demo.gif)
 
 **20fynety8 - A fyne 2048**
 I made this 2048 clone in go to exercise matrix operations.
