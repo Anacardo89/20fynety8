@@ -20,4 +20,4 @@ Fyne is a GUI framework for go.
 ### Disclaimer:  
 There's a bug where if the player takes an action that results in not spawning a new number (ex: moving up resulting in no tile relocation) after the window is closed an error log is displayed, i assume it's something with fyne.  
 
-Since this happens after window is closed and doesn't affect UX (ie playing the game) i'm not too concerned about it, but if your OCD is bothering you... I mean, the code is right there.
+Since this happens after the window is closed and doesn't affect UX (ie playing the game) i'm not too concerned about it, but if your OCD is bothering you... I mean, the code is right there.
