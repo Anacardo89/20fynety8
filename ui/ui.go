@@ -13,59 +13,10 @@ import (
 	"golang.org/x/image/colornames"
 )
 
-func RunApp() {
-	a := app.New()
-	w := a.NewWindow("20fynety8")
-	lw := setLooseWindow(a)
-	ww := setWinWindow(a)
-	game.InitBoard()
-	SetGrid()
-	gridVals := game.Export()
-	UpdateGridColor(gridVals)
-	w.SetContent(Grid)
-	w.Resize(fyne.NewSize(800, 600))
-	w.CenterOnScreen()
-	go func() {
-		for {
-			w.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
-				game.HandleMove(string(k.Name))
-				if game.Loose {
-					lw.Show()
-				}
-				gridVals = game.Export()
-				UpdateGridColor(gridVals)
-				w.SetContent(Grid)
-				if game.Win {
-					ww.Show()
-				}
-			})
-		}
-	}()
-	w.ShowAndRun()
-}
-
-func setLooseWindow(a fyne.App) fyne.Window {
-	losW := a.NewWindow("Defeat")
-	looseTxt := canvas.NewText("You loose", color.White)
-	looseTxt.TextSize = 150
-	losW.SetContent(looseTxt)
-	losW.Hide()
-	losW.CenterOnScreen()
-	return losW
-}
-
-func setWinWindow(a fyne.App) fyne.Window {
-	winW := a.NewWindow("Victory")
-	winTxt := canvas.NewText("You win", color.White)
-	winTxt.TextSize = 150
-	winW.SetContent(winTxt)
-	winW.Hide()
-	winW.CenterOnScreen()
-	return winW
-}
-
 var (
-	Grid     *fyne.Container
+	Grid         *fyne.Container
+	borderedGrid *fyne.Container
+
 	colorMap = map[int][]uint8{
 		0:    {144, 144, 144, 210},
 		2:    {234, 224, 46, 210},
@@ -89,6 +40,57 @@ type Cell struct {
 	container *fyne.Container
 }
 
+func RunApp() {
+	a := app.New()
+	w := a.NewWindow("20fynety8")
+	lw := setLooseWindow(a)
+	ww := setWinWindow(a)
+	game.InitBoard()
+	SetGrid()
+	gridVals := game.Export()
+	updateGridColor(gridVals)
+	w.SetContent(borderedGrid)
+	w.Resize(fyne.NewSize(640, 480))
+	w.CenterOnScreen()
+	go func() {
+		for {
+			w.Canvas().SetOnTypedKey(func(k *fyne.KeyEvent) {
+				game.HandleMove(string(k.Name))
+				if game.Loose {
+					lw.Show()
+				}
+				gridVals = game.Export()
+				updateGridColor(gridVals)
+				w.SetContent(borderedGrid)
+				if game.Win {
+					ww.Show()
+				}
+			})
+		}
+	}()
+	w.ShowAndRun()
+}
+
+func setLooseWindow(a fyne.App) fyne.Window {
+	losW := a.NewWindow("Defeat")
+	looseTxt := canvas.NewText("You loose", color.White)
+	looseTxt.TextSize = 75
+	losW.SetContent(looseTxt)
+	losW.Hide()
+	losW.CenterOnScreen()
+	return losW
+}
+
+func setWinWindow(a fyne.App) fyne.Window {
+	winW := a.NewWindow("Victory")
+	winTxt := canvas.NewText("You win", color.White)
+	winTxt.TextSize = 75
+	winW.SetContent(winTxt)
+	winW.Hide()
+	winW.CenterOnScreen()
+	return winW
+}
+
 func SetGrid() {
 	cols := 4
 	Grid := container.New(layout.NewGridLayout(cols))
@@ -96,10 +98,10 @@ func SetGrid() {
 		cell := newCell(0)
 		Grid.Add(cell.container)
 	}
-
+	borderGrid()
 }
 
-func UpdateGridColor(gridVals []int) {
+func updateGridColor(gridVals []int) {
 	cols := 4
 	value := 0
 	gameGrid := container.New(layout.NewGridLayout(cols))
@@ -113,6 +115,7 @@ func UpdateGridColor(gridVals []int) {
 		value = 0
 	}
 	Grid = gameGrid
+	borderGrid()
 }
 
 func newCell(value int) (cell *Cell) {
@@ -135,4 +138,12 @@ func newCell(value int) (cell *Cell) {
 	}
 	cell.text.Alignment = fyne.TextAlignCenter
 	return cell
+}
+
+func borderGrid() {
+	top := canvas.NewText("20fynety8", color.NRGBA{R: 144, G: 144, B: 144, A: 210})
+	top.TextStyle.Bold = true
+	top.TextSize = 75
+	top.Alignment = fyne.TextAlignCenter
+	borderedGrid = container.NewBorder(top, nil, nil, nil, Grid)
 }
